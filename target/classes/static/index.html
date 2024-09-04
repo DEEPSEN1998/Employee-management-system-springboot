@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<title>Employee Management System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+
+<div class="w3-container">
+  <h2 class="w3-center w3-strong">Employee Management System</h2>
+  <p class="w3-center">Create, Read, Update, Delete Employee details.</p>
+  <button onClick="addemp();" class="w3-light-green w3-button w3-margin">ADD Employee</button>
+  <table class="w3-table-all">
+    <thead>
+      <tr class="w3-light-green">
+        <th>Sl No.</th>
+        <th>Employee Name</th>
+        <th>Email ID</th>
+        <th>Designation</th>
+        <th>Salary</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+	
+    <tbody id="employeeTableBody">
+      <!-- Data will be inserted here dynamically -->
+    </tbody>
+  </table>
+</div>
+
+<div id="window" class="w3-container w3-card-4 w3-light-grey w3-padding-16 w3-border" style="display:none; max-width:80%;margin:0 auto;position:absolute;z-index:1;top:0;left: 50%;
+  transform: translate(-50%,0);">
+    <button onclick="this.parentElement.style.display='none';" class="w3-button w3-red">X</button>
+	<h2 class="w3-center">ADD Employee Details</h2>
+  
+  <form  action="" method="POST">
+    <fieldset class="w3-section w3-padding">
+      <legend>Employee Name</legend>
+      <input class="w3-input w3-border"  id="add_name" name="name" type="text" placeholder="Enter Employee Name" required>
+    </fieldset>
+
+    <fieldset class="w3-section w3-padding">
+      <legend>Email ID</legend>
+      <input class="w3-input w3-border"  id="add_email" name="email" type="email" placeholder="Enter Email ID" required>
+    </fieldset>
+
+    <fieldset class="w3-section w3-padding">
+      <legend>Designation</legend>
+      <input class="w3-input w3-border"  id="add_desg" name="designation" type="text" placeholder="Enter Designation" required>
+    </fieldset>
+
+    <fieldset class="w3-section w3-padding">
+      <legend>Salary</legend>
+      <input class="w3-input w3-border"  id="add_sal" name="salary" type="number" placeholder="Enter Salary" required>
+    </fieldset>
+    <button class="w3-button w3-green w3-margin-top" id="ADD" type="button" onclick="add();">Add Employee</button>
+  </form>
+</div>
+
+<div id="window1" class="w3-container w3-card-4 w3-light-grey w3-padding-16 w3-border" style="display:none; max-width:80%;margin:0 auto;position:absolute;z-index:1;top:0;left: 50%;
+  transform: translate(-50%,0);">
+    <button onclick="this.parentElement.style.display='none';" class="w3-button w3-red">X</button>
+	<h2 class="w3-center">Update Employee Details</h2>
+  
+  <form  action="" method="POST">
+	
+	      
+	      <input class="w3-input w3-border"  id="up_id" name="name" type="hidden" placeholder="Enter Employee ID" required>
+	    
+		
+    <fieldset class="w3-section w3-padding">
+      <legend>Employee Name</legend>
+      <input class="w3-input w3-border"  id="up_name" name="name" type="text" placeholder="Enter Employee Name" required>
+    </fieldset>
+
+    <fieldset class="w3-section w3-padding">
+      <legend>Email ID</legend>
+      <input class="w3-input w3-border"  id="up_email" name="email" type="email" placeholder="Enter Email ID" required>
+    </fieldset>
+
+    <fieldset class="w3-section w3-padding">
+      <legend>Designation</legend>
+      <input class="w3-input w3-border"  id="up_desg" name="designation" type="text" placeholder="Enter Designation" required>
+    </fieldset>
+
+    <fieldset class="w3-section w3-padding">
+      <legend>Salary</legend>
+      <input class="w3-input w3-border"  id="up_sal" name="salary" type="number" placeholder="Enter Salary" required>
+    </fieldset>
+    <button class="w3-button w3-green w3-margin-top" id="update" type="button" onclick="emp_update();">Update Employee</button>
+  </form>
+</div>
+
+<script>
+function display(){	
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function(){
+	if(this.readyState == 4 && this.status == 200 ){
+		    let employees = JSON.parse(xhr.responseText);
+			let tableBody = document.getElementById("employeeTableBody");
+			    tableBody.innerHTML = ''; // Clear the table body
+
+			    employees.forEach((employee, index) => {
+			      let row = '<tr>';
+			        row +='<td>'+index + 1+'</td>';
+			        row +='<td>'+employee.name+'</td>';
+			        row +='<td>'+employee.email+'</td>';
+			        row +='<td>'+employee.designation+'</td>';
+			        row +='<td>'+employee.salary+'</td>';
+			        row +='<td>';
+			        row +='  <button class="w3-button w3-blue" data-id="'+employee.id+'" onclick="updateemp(this);">Edit</button>';
+			        row +='  <button class="w3-button w3-red" data-id="'+employee.id+'" onclick="delemp(this);">Delete</button>';
+			        row +='</td>';
+			        row +='</tr>';
+			      tableBody.innerHTML += row;
+				  });
+	}
+};
+xhr.open("GET","http://localhost:8083/employees",true);
+xhr.send();
+} 
+display();
+function delemp(el){
+	var id=el.getAttribute("data-id");
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function(){
+		if(this.readyState == 4 && this.status == 200 ){
+		   
+		   		  
+		}
+		display();
+	};
+	xhr.open("DELETE","http://localhost:8083/delete/"+id,true);
+	xhr.send();
+}
+function addemp(){
+	document.getElementById("add_name").value='';
+		document.getElementById("add_email").value='';
+		document.getElementById("add_desg").value='';
+		document.getElementById("add_sal").value='';
+	document.getElementById("window").style.display="block";
+	
+}
+function updateemp(el){
+	var id=el.getAttribute('data-id'); 
+	document.getElementById("up_name").value='';
+			document.getElementById("up_email").value='';
+			document.getElementById("up_desg").value='';
+			document.getElementById("up_sal").value='';
+			document.getElementById("up_id").value='';
+	document.getElementById("window1").style.display="block";
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function(){
+		if(this.readyState == 4 && this.status == 200 ){
+			    let em = JSON.parse(xhr.responseText);
+				document.getElementById("up_name").value=em.name;
+			document.getElementById("up_email").value=em.email;
+			document.getElementById("up_desg").value=em.designation;
+			document.getElementById("up_sal").value=em.salary;
+			document.getElementById("up_id").value=em.id;
+	}};
+	xhr.open("GET","http://localhost:8083/"+id,true);
+	xhr.send();
+}
+
+function add(){
+	var name=document.getElementById("add_name").value;
+	var email=document.getElementById("add_email").value;
+	var dsg=document.getElementById("add_desg").value;
+	var sal=document.getElementById("add_sal").value;
+	
+	var body=	JSON.stringify({
+				name: name,
+				email: email,
+				designation: dsg,
+				salary: sal
+			});
+			var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function(){
+					if(this.readyState == 4 && this.status == 200 ){
+					   alert("Data added!");
+					   		  
+					}
+					display();
+					document.getElementById("window").style.display='none';
+				};
+				
+				xhr.open("POST","http://localhost:8083/add",true);
+				xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+				xhr.send(body);
+			
+			
+}
+function emp_update(){
+ var id=document.getElementById("up_id").value;
+   var name=document.getElementById("up_name").value;
+	var email=document.getElementById("up_email").value;
+	var dsg=document.getElementById("up_desg").value;
+	var sal=document.getElementById("up_sal").value;
+	
+	var body=	JSON.stringify({
+				name: name,
+				email: email,
+				designation: dsg,
+				salary: sal
+			});
+			var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function(){
+					if(this.readyState == 4 && this.status == 200 ){
+					   alert("Data Updated!");
+					   		  
+					}
+					display();
+					document.getElementById("window1").style.display='none';
+				};
+				
+				xhr.open("PUT","http://localhost:8083/update/"+id,true);
+				xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+				xhr.send(body);
+				//console.log(body);
+	
+}
+</script>
+
+</body>
+</html>
